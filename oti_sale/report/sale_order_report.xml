@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="action_report_saleorder" model="ir.actions.report">
+	<field name="name">Impression Devis</field>
+	<field name="model">sale.order</field>
+	<field name="report_type">qweb-html</field>
+	<field name="report_name">oti_sale.report_saleorder_oti</field>
+	<field name="report_file">oti_sale.report_saleorder_oti</field>
+	<field name="print_report_name">(object.state in ('draft', 'sent') and 'Devis - %s' % (object.name)) or 'Commande - %s' % (object.name)</field>
+	<field name="binding_model_id" ref="sale.model_sale_order"/>
+	<field name="binding_type">report</field>
+  </record>
+
+</odoo>
