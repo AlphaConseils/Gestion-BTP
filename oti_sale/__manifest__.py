@@ -21,9 +21,9 @@
 
 	# always loaded
 	'data': [
+		'report/layout.xml',
 		'report/sale_order_template.xml',
 		'report/sale_order_report.xml',
-
 		'views/sale_order_views.xml',
 	],
 	# only loaded in demonstration mode

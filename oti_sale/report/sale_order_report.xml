@@ -10,6 +10,7 @@
 	<field name="print_report_name">(object.state in ('draft', 'sent') and 'Devis - %s' % (object.name)) or 'Commande - %s' % (object.name)</field>
 	<field name="binding_model_id" ref="sale.model_sale_order"/>
 	<field name="binding_type">report</field>
+	<field name="multi" eval="False"></field>
   </record>
 
 </odoo>

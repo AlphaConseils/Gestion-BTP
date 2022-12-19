@@ -8,6 +8,9 @@
 	  <field name="partner_id" position="after">
 		<field name="project_subject" attrs="{'readonly': [('state', 'not in', ['draft', 'sent'])]}"/>
 	  </field>
+	  <field name="product_template_id" position="before">
+		<field name="item"/>
+	  </field>
 	</field>
   </record>
 </odoo>
