@@ -4,7 +4,7 @@
   <record id="action_report_saleorder" model="ir.actions.report">
 	<field name="name">Impression Devis</field>
 	<field name="model">sale.order</field>
-	<field name="report_type">qweb-html</field>
+	<field name="report_type">qweb-pdf</field>
 	<field name="report_name">oti_sale.report_saleorder_oti</field>
 	<field name="report_file">oti_sale.report_saleorder_oti</field>
 	<field name="print_report_name">(object.state in ('draft', 'sent') and 'Devis - %s' % (object.name)) or 'Commande - %s' % (object.name)</field>
