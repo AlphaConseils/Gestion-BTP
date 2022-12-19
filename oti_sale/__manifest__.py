@@ -5,7 +5,7 @@
 
 	'description': """
 
-    """,
+	""",
 
 	'author': "Alpha conseils",
 	'website': "https://www.alphamada.com/",
@@ -21,14 +21,19 @@
 
 	# always loaded
 	'data': [
+		'security/ir.model.access.csv',
 		'report/layout.xml',
 		'report/sale_order_template.xml',
 		'report/sale_order_report.xml',
 		'views/sale_order_views.xml',
 	],
-	# only loaded in demonstration mode
-	'demo': [
-	],
+	'assets': {
+		'web.assets_backend': [
+			'oti_sale/static/src/css/sale_attachment.css',
+			'oti_sale/static/src/components/**/*',
+		],
+
+	},
 	'installable': True,
 	'application': False,
 	'auto_install': False,

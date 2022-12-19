@@ -11,6 +11,21 @@
 	  <field name="product_template_id" position="before">
 		<field name="item"/>
 	  </field>
+	  <xpath expr="//notebook[1]" position="inside">
+		<page string="Attachment" name="attachment" attrs="{'invisible': [('id', '=', False)]}">
+		  <group>
+			<field name="sale_attachment_date"/>
+		  </group>
+		  <group>
+			<field name="sale_attachment_widget" colspan="2" nolabel="1" widget="sale_attachment" options="{'date_ref': 'sale_attachment_date'}"/>
+		  </group>
+		  <group>
+			<group><field name="attachment_note" /></group>
+			<group></group>
+
+		  </group>
+		</page>
+	  </xpath>
 	</field>
   </record>
 </odoo>

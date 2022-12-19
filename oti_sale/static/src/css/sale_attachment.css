@@ -1,0 +1,27 @@
+.sale_table {
+    width: 100%;
+}
+
+.sale_table td:not(.no-border){
+    border: 1px solid black
+}
+.sale_table input{
+    border: none;
+    border-bottom: 1px solid grey;
+}
+.content-num{
+    text-align: end;
+}
+.top-header{
+    height: 60px;
+    text-align: center;
+    background: orange;
+    font-weight: bolder;
+}
+.sub-header{
+    text-align: center;
+    background: aliceblue;
+}
+.sale-content{
+    background: #f1f2f5;
+}

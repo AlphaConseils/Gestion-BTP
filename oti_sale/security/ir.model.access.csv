@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_attachment_period_read,access.sale.attachment.period.public,oti_sale.model_sale_attachment_period,,1,0,0,0
+access_sale_attachment_period_user,access.sale.attachment.period.user,oti_sale.model_sale_attachment_period,base.group_user,1,1,1,0
+access_sale_attachment_period_admin,access.sale.attachment.period.user,oti_sale.model_sale_attachment_period,base.group_erp_manager,1,1,1,1
