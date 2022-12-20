@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+    <t t-name="oti_sale.SaleAttachment" owl="1">
+        <div>
+		  <table class="sale_table">
+			<tbody>
+			  <tr class="top-header">
+				<td colspan="4"><span>Designation</span></td>
+				<td colspan="2"><span>Montant contractuel</span></td>
+				<td colspan="3"><span>Avancement en %</span></td>
+				<td colspan="3"><span>Montant correspondant en Ar</span></td>
+			  </tr>
+			  <tr class="sub-header">
+				<td style="width:5%"><span>Item.</span></td>
+				<td style="width: 25%"><span>Designation</span></td>
+				<td style="width:5%"><span>Unité</span></td>
+				<td style="width:5%"><span>Quantité</span></td>
+				<td style="width:5%"><span>Prix unitaire</span></td>
+				<td style="width:10%"><span>Montant</span></td>
+				<td style="width:5%"><span>Cumul</span></td>
+				<td style="width:5%"><span>%antérieur</span></td>
+				<td style="width:5%"><span>% du mois</span></td>
+				<td style="width: 10%"><span>Cumul</span></td>
+				<td style="width: 10%"><span>Antérieur</span></td>
+				<td style="width: 10%"><span>Du mois</span></td>
+			  </tr>
+			  <t t-foreach="lines" t-as="line" t-key="line_index">
+				<tr >
+					<td class="sale-content" ><span t-esc="line.item or ''"></span></td>
+					<td class="sale-content" ><span t-esc="line.name"></span></td>
+					<td class="sale-content" ><span t-esc="line.product_uom"></span></td>
+					<td class="content-num sale-content"><span t-esc="line.product_qty"></span></td>
+					<td class="content-num sale-content"><span t-esc="line.price_unit"></span></td>
+					<td class="content-num sale-content"><span t-esc="line.price_subtotal"></span></td>
+					<td class="content-num"><span t-esc="line.percent_anterior + line.percent_current or ''"></span></td>
+					<td class="content-num"><span t-esc="line.percent_anterior or ''"></span></td>
+					<td>
+					  <div class="row">
+						<div class="col-12">
+						  <input type="text" class="content-num"
+					           t-att-value="line.percent_current or ''"
+							   t-on-keypress="onValidatePercent"
+							   t-att-line_id="line.order_line_id"></input>
+						  <span></span>
+						</div>
+					  </div>
+					</td>
+					<td class="content-num"><span t-esc="_formatMonetary(line.price_anterior + line.price_current) or ''"></span></td>
+					<td class="content-num"><span t-esc="_formatMonetary(line.price_anterior) or ''"></span></td>
+					<td class="content-num"><span t-esc="_formatMonetary(line.price_current) or ''"></span></td>
+			  	</tr>
+
+			  </t>
+			  <tr style="height: 40px;">
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td>TOTAL</td>
+				<td><span t-esc="_formatMonetary(getTotalCumuls())"></span></td>
+				<td><span t-esc="_formatMonetary(getTotalAnterior())"></span></td>
+				<td><span t-esc="_formatMonetary(getTotalCurrent())"></span></td>
+			  </tr>
+
+			</tbody>
+		  </table>
+		</div>
+	</t>
+</templates>
