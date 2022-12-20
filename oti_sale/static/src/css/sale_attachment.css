@@ -25,3 +25,24 @@
 .sale-content{
     background: #f1f2f5;
 }
+.attachment_row{
+    margin-top: 30px
+}
+.attachment_footer{
+    border: 1px solid black
+}
+.attachment_footer div{
+    text-align: center;
+    height: 150px
+}
+.attachment_font{
+    font-family: Calibri;
+    font-size: 8px;
+    font-weight: bolder;
+}
+.attachment_font td{
+    padding: 5px;
+}
+.attachment_header{
+    text-align: center;
+}

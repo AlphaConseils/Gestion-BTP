@@ -24,13 +24,18 @@
 		'security/ir.model.access.csv',
 		'report/layout.xml',
 		'report/sale_order_template.xml',
+		'report/sale_attachment_template.xml',
 		'report/sale_order_report.xml',
 		'views/sale_order_views.xml',
+
 	],
 	'assets': {
 		'web.assets_backend': [
 			'oti_sale/static/src/css/sale_attachment.css',
 			'oti_sale/static/src/components/**/*',
+		],
+		'web.report_assets_common': [
+			'oti_sale/static/src/css/sale_attachment.css',
 		],
 
 	},

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_sale_attachment_oti">
+	<t t-call="web.html_container">
+	  <t t-set="data_report_margin_top" t-value="1"/>
+	  <t t-set="data_report_header_spacing" t-value="1"/>
+	  <t t-foreach="docs" t-as="doc">
+		<t t-call="oti_sale.report_sale_attachment_document" t-lang="doc.partner_id.lang"/>
+	  </t>
+	</t>
+  </template>
+
+  <template id="report_sale_attachment_document">
+	<div class="page">
+	  <t t-call="oti_sale.external_layout_oti">
+		<t t-if="not o" t-set="o" t-value="doc"/>
+		<div class="row attachment_row">
+		  <div class="col-4">
+			<img src="/oti_sale/static/src/img/2(1).png" style="width:100%"></img>
+		  </div>
+		</div>
+		<div class="row attachment_row">
+		  <div class="col-12" style="text-align: center;">
+			<span>CHANTIER: </span>
+			<span t-esc="o.project_subject"></span><br/>
+		  	<span style="font-weight: bolder">OBJET: </span>
+		    <span style="font-weight: bolder">Attachment n° 01</span>
+		  </div>
+		</div>
+		<div class="row attachment_row">
+		  <div class="col-12">
+			<span>Bon de commande n° </span>
+			<span t-esc="o.name"/><br/>
+			<span>Total hors taxes: </span>
+			<span t-esc="o.amount_untaxed"/>
+		  </div>
+		</div>
+		<div class="row attachment_row">
+		  <table class="sale_table attachment_font">
+			<tbody>
+			  <tr>
+				<td class="attachment_header" rowspan="2"><span>Item</span></td>
+				<td class="attachment_header" rowspan="2"><span>Designation</span></td>
+				<td class="attachment_header" rowspan="2"><span>Unité</span></td>
+				<td class="attachment_header" rowspan="2"><span>Quantité</span></td>
+				<td class="attachment_header" rowspan="1" colspan="3"><span>Quantité réalisée</span></td>
+				<td class="attachment_header" rowspan="2"><span>Prix unitaire (ar)</span></td>
+				<td class="attachment_header" rowspan="2"><span>Total(ar)</span></td>
+				<td class="attachment_header" rowspan="1" colspan="3"><span>Montant réalisation</span></td>
+			  </tr>
+			  <tr>
+				<td rowspan="1"><span>Cumule</span></td>
+				<td rowspan="1"><span>Antérieure</span></td>
+				<td rowspan="1"><span>Période</span></td>
+				<td rowspan="1"><span>Cumule (ar)</span></td>
+				<td rowspan="1"><span>Antérieure (ar)</span></td>
+				<td rowspan="1"><span>Période (ar)</span></td>
+			  </tr>
+			  <t t-foreach="o.order_line" t-as="line">
+				<tr>
+				  <t t-set="content" t-value="list(filter(lambda t: t.get('order_line_id', False) == line.id, o.sale_attachment_widget.get('content')))"/>
+				  <t t-set="attachment" t-value="content and content[0] or {}"/>
+				  <td><span t-esc="line.item"></span></td>
+				  <td><span t-esc="line.name"></span></td>
+				  <td><span t-field="line.product_uom"></span></td>
+				  <td><span t-field="line.product_uom_qty"></span></td>
+				  <td><span t-esc="attachment.get('percent_anterior', '') + attachment.get('percent_current', '')"/>%</td>
+				  <td><span t-esc="attachment.get('percent_anterior', '')"/>%</td>
+				  <td><span t-esc="attachment.get('percent_current', '')"/>%</td>
+				  <td><span t-field="line.price_unit"></span></td>
+				  <td><span t-field="line.price_subtotal"></span></td>
+				  <td><span t-esc="attachment.get('price_anterior', '') + attachment.get('price_current', '')" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></span></td>
+				  <td><span t-esc="attachment.get('price_anterior', '')" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></span></td>
+				  <td><span t-esc="attachment.get('price_current', '')" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></span></td>
+				</tr>
+			  </t>
+			  <tr>
+				<t t-set="total_attachment" t-value="o.sale_attachment_widget.get('content')"/>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td colspan="2">Total hors taxes (ar)</td>
+				<td t-esc="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('price_anterior','') + l.get('price_current', '') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('price_anterior','') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('price_current', '') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+
+			  </tr>
+			  <tr>
+				<t t-set="total_attachment" t-value="o.sale_attachment_widget.get('content')"/>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td colspan="2">Taxe (ar)</td>
+				<td t-esc="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('tax_anterior','') + l.get('tax_current', '') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('tax_anterior','') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('tax_current', '') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+			  </tr>
+			  <tr>
+				<t t-set="total_attachment" t-value="o.sale_attachment_widget.get('content')"/>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td colspan="2">TTC (ar)</td>
+				<td t-esc="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('price_anterior','') + l.get('price_current', '') for l in total_attachment]) + sum([l.get('tax_anterior','') + l.get('tax_current', '') for l in total_attachment]) " t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('tax_anterior','') for l in total_attachment]) + sum([l.get('price_anterior','') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+				<td t-esc="sum([l.get('tax_current', '') for l in total_attachment]) + sum([l.get('price_current', '') for l in total_attachment])" t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'></td>
+			  </tr>
+			</tbody>
+		  </table>
+		</div>
+		<div class="row attachment_row">
+		  <span t-field="o.attachment_note"/>
+		</div>
+		<div class="row attachment_row attachment_footer">
+		  <div class="col-6">
+			<span>Responsable</span>&amp;nbsp;
+			<span t-field="o.partner_id"/>
+		  </div>
+		  <div class="col-6">
+			<span>Responsable OTI</span>
+		  </div>
+		</div>
+	  </t>
+	</div>
+  </template>
+</odoo>

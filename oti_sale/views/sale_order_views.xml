@@ -21,7 +21,9 @@
 		  </group>
 		  <group>
 			<group><field name="attachment_note" /></group>
-			<group></group>
+			<group>
+			  <button name="action_attachment_report" string="Imprimer" type="object" class="oe_highlight"></button>
+			</group>
 
 		  </group>
 		</page>

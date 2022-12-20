@@ -13,4 +13,16 @@
 	<field name="multi" eval="False"></field>
   </record>
 
+  <record id="action_report_attachment" model="ir.actions.report">
+	<field name="name">Impression Attachment</field>
+	<field name="model">sale.order</field>
+	<field name="report_type">qweb-pdf</field>
+	<field name="report_name">oti_sale.report_sale_attachment_oti</field>
+	<field name="report_file">oti_sale.report_sale_attachment_oti</field>
+	<field name="print_report_name">'Attachment Bon de Commande - %s - %s' % (object.name, object.sale_attachment_date)</field>
+	<field name="binding_model_id" eval="False"/>
+	<field name="binding_type">report</field>
+	<field name="multi" eval="False"></field>
+  </record>
+
 </odoo>
