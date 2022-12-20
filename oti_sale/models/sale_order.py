@@ -22,11 +22,13 @@ class SaleOrder(models.Model):
 					percent_anterior = sum(
 						line.mapped('attachment_period_ids').filtered(lambda l: sale.sale_attachment_date and l.date < sale.sale_attachment_date.replace(day=1)).mapped('percentage'))
 					price_anterior = line.price_subtotal * percent_anterior / 100
+					tax_anterior = line.price_tax * percent_anterior / 100
 					percent_current = sum(line.mapped('attachment_period_ids').filtered(
 						lambda l: fields.Date.from_string(l.date).month == fields.Date.from_string(
 							sale.sale_attachment_date).month and fields.Date.from_string(l.date).year == fields.Date.from_string(
 							sale.sale_attachment_date).year).mapped('percentage'))
 					price_current = line.price_subtotal * percent_current / 100
+					tax_current = line.price_tax * percent_current / 100
 					order_line_vals.append({
 						'order_line_id': line.id,
 						'item': line.item,
@@ -35,10 +37,14 @@ class SaleOrder(models.Model):
 						'product_qty': line.product_uom_qty,
 						'price_unit': line.price_unit,
 						'price_subtotal': line.price_subtotal,
+						'price_tax': line.price_tax,
+						'price_total': line.price_total,
 						'percent_anterior': percent_anterior,
 						'percent_current': percent_current,
 						'price_anterior': price_anterior,
 						'price_current': price_current,
+						'tax_anterior': tax_anterior,
+						'tax_current': tax_current,
 						'currency_id': sale.company_id.currency_id.id,
 
 
@@ -73,6 +79,9 @@ class SaleOrder(models.Model):
 	def compute_amount_to_text(self):
 		for rec in self:
 			rec.amount_total_text = amount_to_text_fr(rec.amount_total, rec.currency_id.currency_unit_label)
+
+	def action_attachment_report(self):
+		return self.env.ref('oti_sale.action_report_attachment').report_action(self)
 
 
 class SaleOrderLine(models.Model):
