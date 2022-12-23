@@ -29,7 +29,8 @@
     margin-top: 30px
 }
 .attachment_footer{
-    border: 1px solid black
+    border: 1px solid black;
+    page-break-inside: avoid;
 }
 .attachment_footer div{
     text-align: center;
@@ -37,7 +38,7 @@
 }
 .attachment_font{
     font-family: Calibri;
-    font-size: 8px;
+    font-size: 12px;
     font-weight: bolder;
 }
 .attachment_font td{

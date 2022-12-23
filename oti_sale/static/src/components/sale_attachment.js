@@ -54,30 +54,45 @@ export class SaleAttachment extends Component {
         this.props.record.model.notify();
 
     }
-    getTotalCumuls(){
+    getTotalCumuls(section_index, index){
         var total_cumuls = 0;
-        for(var i=0; i<this.lines.length;i++){
-            total_cumuls += this.lines[i].price_anterior + this.lines[i].price_current
+        var length = index == false? this.lines.length : index;
+        for(var i=section_index; i<=length;i++){
+            if(this.lines[i]){
+                total_cumuls += this.lines[i].price_anterior + this.lines[i].price_current
+            }
+
         }
         return total_cumuls
     }
-    getTotalAnterior(){
+    getTotalAnterior(section_index,index){
         var total_anterior = 0;
-        for(var i=0; i<this.lines.length;i++){
-            total_anterior += this.lines[i].price_anterior
+        var length = index == false? this.lines.length : index;
+        for(var i=section_index; i<=length;i++){
+            if(this.lines[i]){
+                 total_anterior += this.lines[i].price_anterior
+            }
+
         }
         return total_anterior
 
     }
-    getTotalCurrent(){
+    getTotalCurrent(section_index,index){
         var total_current = 0;
-        for(var i=0; i<this.lines.length;i++){
-            total_current += this.lines[i].price_current
+        var length = index == false? this.lines.length : index;
+        for(var i=section_index; i<=length;i++){
+            if(this.lines[i]){
+                total_current += this.lines[i].price_current
+            }
+
         }
         return total_current
     }
     _formatMonetary(amount){
-        return formatMonetary(amount, { currencyId: this.lines[0].currency_id });
+        return formatMonetary(amount, { currencyId: false });
+    }
+    _nextLine_type(index){
+        return this.lines[index + 1]? this.lines[index + 1].display_type : 'line_section';
     }
 }
 SaleAttachment.template = "oti_sale.SaleAttachment";

@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from odoo import models, fields, api
 from odoo.addons.oti_sale.models.tools import amount_to_text_fr
 from datetime import datetime
@@ -10,9 +11,11 @@ class SaleOrder(models.Model):
 	amount_total_text = fields.Char('Amount total text', compute='compute_amount_to_text')
 	sale_attachment_date = fields.Date('Choisissez la période à afficher')
 	sale_attachment_widget = fields.Binary(compute='_compute_sale_attachment')
-	attachment_note = fields.Html('Note')
+	attachment_note = fields.Html('Note', compute='_get_attachment_note', inverse='_set_attachment_note')
+	attachment_parent_id = fields.Many2one('sale.attachment.period.parent', 'Attachment Main')
+	attachment_state = fields.Selection(related='attachment_parent_id.state')
 
-	@api.depends('sale_attachment_date', 'order_line.attachment_period_ids')
+	@api.depends('sale_attachment_date', 'order_line.attachment_period_ids', 'attachment_parent_id')
 	def _compute_sale_attachment(self):
 		for sale in self:
 			sale_attachment_vals = {'title': 'Attachement', 'date_ref': 'sale_attachment_date', 'content': []}
@@ -20,7 +23,8 @@ class SaleOrder(models.Model):
 			for line in sale.order_line:
 				if 'virtual' not in str(line.id):
 					percent_anterior = sum(
-						line.mapped('attachment_period_ids').filtered(lambda l: sale.sale_attachment_date and l.date < sale.sale_attachment_date.replace(day=1)).mapped('percentage'))
+						line.mapped('attachment_period_ids').filtered(
+							lambda l: sale.sale_attachment_date and l.date < sale.sale_attachment_date.replace(day=1)).mapped('percentage'))
 					price_anterior = line.price_subtotal * percent_anterior / 100
 					tax_anterior = line.price_tax * percent_anterior / 100
 					percent_current = sum(line.mapped('attachment_period_ids').filtered(
@@ -31,6 +35,7 @@ class SaleOrder(models.Model):
 					tax_current = line.price_tax * percent_current / 100
 					order_line_vals.append({
 						'order_line_id': line.id,
+						'display_type': line.display_type,
 						'item': line.item,
 						'name': line.name,
 						'product_uom': line.product_uom.name,
@@ -46,7 +51,7 @@ class SaleOrder(models.Model):
 						'tax_anterior': tax_anterior,
 						'tax_current': tax_current,
 						'currency_id': sale.company_id.currency_id.id,
-
+						'attachment_state': sale.attachment_parent_id and sale.attachment_parent_id.state or '',
 
 					})
 			sale_attachment_vals['content'] = order_line_vals
@@ -83,6 +88,53 @@ class SaleOrder(models.Model):
 	def action_attachment_report(self):
 		return self.env.ref('oti_sale.action_report_attachment').report_action(self)
 
+	@api.onchange('sale_attachment_date')
+	def onchange_sale_attachment_date(self):
+		if self.sale_attachment_date:
+			date_start = self.sale_attachment_date.replace(day=1)
+			date_end = date_start + relativedelta(months=1) - relativedelta(days=1)
+			parent_attachment_id = self.env['sale.attachment.period.parent'].search(
+				[('sale_id', '=', self.ids[0]), ('date', '>=', date_start), ('date', '<=', date_end)], limit=1)
+			if parent_attachment_id:
+				self.attachment_parent_id = parent_attachment_id.id
+			else:
+				self.attachment_parent_id = False
+		else:
+			self.attachment_parent_id = False
+
+	@api.depends('sale_attachment_date')
+	def _get_attachment_note(self):
+		for rec in self:
+			if rec.attachment_parent_id:
+				rec.attachment_note = rec.attachment_parent_id.note
+
+	def _set_attachment_note(self):
+		for rec in self:
+			if rec.attachment_parent_id:
+				rec.attachment_parent_id.note = rec.attachment_note
+			else:
+				vals = {
+					'sale_id': rec.id,
+					'note': rec.attachment_note,
+					'date': rec.sale_attachment_date,
+					'state': 'draft',
+				}
+				parent_attachment = self.env['sale.attachment.period.parent'].create(vals)
+				rec.update({'attachment_parent_id': parent_attachment.id})
+
+	def confirm_attachment(self):
+		self.ensure_one()
+		if self.attachment_parent_id:
+			self.attachment_parent_id.state = 'validated'
+		else:
+			vals = {
+				'sale_id': rec.id,
+				'note': rec.attachment_note,
+				'date': rec.sale_attachment_date,
+				'state': 'validated',
+			}
+			parent_attachment = self.env['sale.attachment.period.parent'].create(vals)
+			self.update({'attachment_parent_id': parent_attachment.id})
 
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
