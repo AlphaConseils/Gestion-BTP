@@ -26,13 +26,6 @@ export class SaleAttachment extends Component {
             date_ref: 'sale_attachment_date',
             sale_id: this.props.record.data.id,
         };
-//        for (let [key, value] of Object.entries(info.content)) {
-//            value.price_subtotal_formatted = formatMonetary(value.price_subtotal, { currencyId: value.currency_id });
-//            value.price_anterior_formatted = formatMonetary(value.price_anterior, { currencyId: value.currency_id });
-//            value.price_current_formatted = formatMonetary(value.price_current, { currencyId: value.currency_id });
-//
-//        }
-
         this.lines = info.content;
         this.title = info.title;
         this.date_ref = info.date_ref;
@@ -48,9 +41,11 @@ export class SaleAttachment extends Component {
         if(!date_object){
             return ;
         }
+
         var value = parseFloat($target.val());
         await this.orm.call(this.props.record.resModel, 'update_sale_attachment', [this.sale_id, line_id, date_object,value ], {});
         await this.props.record.model.root.load();
+        console.log(this.props.record);
         this.props.record.model.notify();
 
     }

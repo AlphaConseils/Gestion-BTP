@@ -25,11 +25,13 @@
 			<span t-esc="o.project_subject"></span>
 			<br/>
 			<span style="font-weight: bolder">OBJET:</span>
-			<span style="font-weight: bolder">Attachment n° 01</span>
+			<span style="font-weight: bolder"><span t-field="o.attachment_name"/></span>
 		  </div>
 		</div>
 		<div class="row attachment_row">
 		  <div class="col-12">
+			<span>Période:</span>
+			<span t-field="o.sale_attachment_date" t-options='{"format": "MM/yyyy"}'/><br/>
 			<span>Bon de commande n°</span>
 			<span t-esc="o.name"/>
 			<br/>

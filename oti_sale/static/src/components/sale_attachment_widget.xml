@@ -39,7 +39,7 @@
 					<td class="content-num sale-content"><span t-esc="line.price_subtotal"></span></td>
 					<td class="content-num"><span t-esc="line.percent_anterior + line.percent_current or ''"></span></td>
 					<td class="content-num"><span t-esc="line.percent_anterior or ''"></span></td>
-					<td>
+					<td class="content-num">
 					  <t t-if="line.attachment_state != 'validated'">
 						<div class="row">
 						  <div class="col-12">
@@ -52,7 +52,7 @@
 						</div>
 					  </t>
 					  <t t-elif="line.attachment_state == 'validated'">
-						<span class="content-num" t-esc="line.percent_current or ''"/>
+						<span  t-esc="line.percent_current or ''"/>
 
 					  </t>
 
