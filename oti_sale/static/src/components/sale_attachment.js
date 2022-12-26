@@ -26,13 +26,6 @@ export class SaleAttachment extends Component {
             date_ref: 'sale_attachment_date',
             sale_id: this.props.record.data.id,
         };
-//        for (let [key, value] of Object.entries(info.content)) {
-//            value.price_subtotal_formatted = formatMonetary(value.price_subtotal, { currencyId: value.currency_id });
-//            value.price_anterior_formatted = formatMonetary(value.price_anterior, { currencyId: value.currency_id });
-//            value.price_current_formatted = formatMonetary(value.price_current, { currencyId: value.currency_id });
-//
-//        }
-
         this.lines = info.content;
         this.title = info.title;
         this.date_ref = info.date_ref;
@@ -48,36 +41,53 @@ export class SaleAttachment extends Component {
         if(!date_object){
             return ;
         }
+
         var value = parseFloat($target.val());
         await this.orm.call(this.props.record.resModel, 'update_sale_attachment', [this.sale_id, line_id, date_object,value ], {});
         await this.props.record.model.root.load();
+        console.log(this.props.record);
         this.props.record.model.notify();
 
     }
-    getTotalCumuls(){
+    getTotalCumuls(section_index, index){
         var total_cumuls = 0;
-        for(var i=0; i<this.lines.length;i++){
-            total_cumuls += this.lines[i].price_anterior + this.lines[i].price_current
+        var length = index == false? this.lines.length : index;
+        for(var i=section_index; i<=length;i++){
+            if(this.lines[i]){
+                total_cumuls += this.lines[i].price_anterior + this.lines[i].price_current
+            }
+
         }
         return total_cumuls
     }
-    getTotalAnterior(){
+    getTotalAnterior(section_index,index){
         var total_anterior = 0;
-        for(var i=0; i<this.lines.length;i++){
-            total_anterior += this.lines[i].price_anterior
+        var length = index == false? this.lines.length : index;
+        for(var i=section_index; i<=length;i++){
+            if(this.lines[i]){
+                 total_anterior += this.lines[i].price_anterior
+            }
+
         }
         return total_anterior
 
     }
-    getTotalCurrent(){
+    getTotalCurrent(section_index,index){
         var total_current = 0;
-        for(var i=0; i<this.lines.length;i++){
-            total_current += this.lines[i].price_current
+        var length = index == false? this.lines.length : index;
+        for(var i=section_index; i<=length;i++){
+            if(this.lines[i]){
+                total_current += this.lines[i].price_current
+            }
+
         }
         return total_current
     }
     _formatMonetary(amount){
-        return formatMonetary(amount, { currencyId: this.lines[0].currency_id });
+        return formatMonetary(amount, { currencyId: false });
+    }
+    _nextLine_type(index){
+        return this.lines[index + 1]? this.lines[index + 1].display_type : 'line_section';
     }
 }
 SaleAttachment.template = "oti_sale.SaleAttachment";

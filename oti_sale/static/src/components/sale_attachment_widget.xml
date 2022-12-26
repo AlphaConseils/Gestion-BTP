@@ -25,8 +25,12 @@
 				<td style="width: 10%"><span>Antérieur</span></td>
 				<td style="width: 10%"><span>Du mois</span></td>
 			  </tr>
+			  <t t-set="current_subtotal" t-value="0"/>
+			  <t t-set="section_index" t-value="0"/>
 			  <t t-foreach="lines" t-as="line" t-key="line_index">
-				<tr >
+				<!--<t t-if="not line.display_type">-->
+				  <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
+				  <tr t-if="line.display_type != 'line_section'">
 					<td class="sale-content" ><span t-esc="line.item or ''"></span></td>
 					<td class="sale-content" ><span t-esc="line.name"></span></td>
 					<td class="sale-content" ><span t-esc="line.product_uom"></span></td>
@@ -35,21 +39,52 @@
 					<td class="content-num sale-content"><span t-esc="line.price_subtotal"></span></td>
 					<td class="content-num"><span t-esc="line.percent_anterior + line.percent_current or ''"></span></td>
 					<td class="content-num"><span t-esc="line.percent_anterior or ''"></span></td>
-					<td>
-					  <div class="row">
-						<div class="col-12">
-						  <input type="text" class="content-num"
-					           t-att-value="line.percent_current or ''"
-							   t-on-keypress="onValidatePercent"
-							   t-att-line_id="line.order_line_id"></input>
-						  <span></span>
+					<td class="content-num">
+					  <t t-if="line.attachment_state != 'validated'">
+						<div class="row">
+						  <div class="col-12">
+							<input type="text" class="content-num"
+								 t-att-value="line.percent_current or ''"
+								 t-on-keypress="onValidatePercent"
+								 t-att-line_id="line.order_line_id"></input>
+							<span></span>
+						  </div>
 						</div>
-					  </div>
+					  </t>
+					  <t t-elif="line.attachment_state == 'validated'">
+						<span  t-esc="line.percent_current or ''"/>
+
+					  </t>
+
 					</td>
 					<td class="content-num"><span t-esc="_formatMonetary(line.price_anterior + line.price_current) or ''"></span></td>
 					<td class="content-num"><span t-esc="_formatMonetary(line.price_anterior) or ''"></span></td>
 					<td class="content-num"><span t-esc="_formatMonetary(line.price_current) or ''"></span></td>
-			  	</tr>
+				  </tr>
+				<tr t-if="line.display_type == 'line_section'">
+				  <t t-set="section_index" t-value="line_index"/>
+				  <td name="td_section_line" colspan="99" style="border: 1px solid;padding: 5px;">
+					<span t-esc="line.name"/>
+				  </td>
+				  <t t-set="current_section" t-value="line"/>
+				  <t t-set="current_subtotal" t-value="0"/>
+				</tr>
+				<tr t-if="current_section and (_nextLine_type(line_index) == 'line_section')">
+
+				  <td name="td_section_subtotal" colspan="9" style="border: 1px solid;text-align: end; padding: 5px;">
+					<strong class="mr16">Sous-total</strong>
+				  </td>
+				  <td>
+					<t t-esc="_formatMonetary(getTotalCumuls(section_index,line_index))"/>
+				  </td>
+				  <td>
+					<t t-esc="_formatMonetary(getTotalAnterior(section_index,line_index))"/>
+				  </td>
+				  <td>
+					<t t-esc="_formatMonetary(getTotalCurrent(section_index,line_index))"/>
+				  </td>
+				</tr>
+
 
 			  </t>
 			  <tr style="height: 40px;">
@@ -60,11 +95,10 @@
 				<td class="no-border"></td>
 				<td class="no-border"></td>
 				<td class="no-border"></td>
-				<td class="no-border"></td>
-				<td>TOTAL</td>
-				<td><span t-esc="_formatMonetary(getTotalCumuls())"></span></td>
-				<td><span t-esc="_formatMonetary(getTotalAnterior())"></span></td>
-				<td><span t-esc="_formatMonetary(getTotalCurrent())"></span></td>
+				<td colspan="2">TOTAL</td>
+				<td><span t-esc="_formatMonetary(getTotalCumuls(0,false))"></span></td>
+				<td><span t-esc="_formatMonetary(getTotalAnterior(0,false))"></span></td>
+				<td><span t-esc="_formatMonetary(getTotalCurrent(0,false))"></span></td>
 			  </tr>
 
 			</tbody>

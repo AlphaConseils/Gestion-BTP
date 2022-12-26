@@ -12,17 +12,28 @@
 		<field name="item"/>
 	  </field>
 	  <xpath expr="//notebook[1]" position="inside">
-		<page string="Attachment" name="attachment" attrs="{'invisible': [('id', '=', False)]}">
+		<page string="Attachment" name="attachment" attrs="{'invisible': ['|', ('id', '=', False), ('state', 'not in', ['sale'] )]}">
 		  <group>
-			<field name="sale_attachment_date"/>
+			<field name="sale_attachment_date" options="{'datepicker': {'format': 'MM/yyyy'}}"/>
+			<field name="attachment_parent_id"/>
+			<field name="attachment_state" invisible="1"/>
 		  </group>
 		  <group>
-			<field name="sale_attachment_widget" colspan="2" nolabel="1" widget="sale_attachment" options="{'date_ref': 'sale_attachment_date'}"/>
+			<field name="sale_attachment_widget" colspan="2" nolabel="1" widget="sale_attachment" options="{'date_ref': 'sale_attachment_date'}" readonly="1"/>
 		  </group>
+		  <separator/>
 		  <group>
-			<group><field name="attachment_note" /></group>
+			<group>
+			  <field name="attachment_name" invisible="1"/>
+			  <field name="attachment_note" attrs="{'invisible': [('attachment_parent_id', '=', False)]}"/>
+			  <field name="attachment_id" filename="attachment_name"/>
+			</group>
 			<group>
 			  <button name="action_attachment_report" string="Imprimer" type="object" class="oe_highlight"></button>
+			  <button name="confirm_attachment" string="Valider" type="object" attrs="{'invisible':[('attachment_parent_id', '!=', False), ('attachment_state', '!=', 'draft')]}"></button>
+			  <div attrs="{'invisible':[('attachment_state', '!=', 'validated')]}">
+				<span>Attachement Validé</span>
+			  </div>
 			</group>
 
 		  </group>

@@ -13,7 +13,7 @@
   <template id="external_layout_oti">
 	<t t-if="not o" t-set="o" t-value="doc"/>
 	<div
-	t-attf-class="article o_report_layout_standard"
+	t-attf-class="article"
 	t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
 	t-att-data-oe-lang="o and o.env.context.get('lang')">
 	  <t t-out="0"/>
@@ -74,30 +74,30 @@
 	  </div>
 	</div>
 
-	  <div class="row footer o_standard_footer"
-		   style="margin-top:40px;font-size: 20px;font-weight: bold;padding-left: 50px;">
-		<div class="col-4 first-page">
-		  <img src="/oti_sale/static/src/img/5.png" style="width:35%"></img>
-		</div>
-		<div class="col-7 first-page" style="padding-top: 18px;">
-		  <span style="color: #626365;">Suivi par:</span>
-		  <t t-if="o.user_id">
-			&amp;nbsp;
-			<span style="color: #626365;" t-esc="o.user_id.name"></span>
-		  </t>
-		  <t t-if="o.user_id.partner_id.phone">
-			&amp;nbsp;/&amp;nbsp;
-			<span style="color: #626365;" t-esc="o.user_id.partner_id.phone"></span>
-		  </t>
-
-		</div>
-		<div class="col-1 not-first-page" style="padding-top: 7%;">
-		  <span style="font-weight:normal;font-family:sans-serif;font-size:12px">Page </span>
-		  <span class="page" style="font-weight:normal;font-family:sans-serif;font-size:12px"/>
-		  <span style="font-weight:normal;font-family:sans-serif;font-size:12px">/</span>
-		  <span class="topage" style="font-weight:normal;font-family:sans-serif;font-size:12px"/>
-		</div>
+	<div class="row footer o_standard_footer"
+		 style="margin-top:40px;font-size: 20px;font-weight: bold;padding-left: 50px;">
+	  <div class="col-4 first-page">
+		<img src="/oti_sale/static/src/img/5.png" style="width:35%"></img>
 	  </div>
+	  <div class="col-7 first-page" style="padding-top: 18px;">
+		<span style="color: #626365;">Suivi par:</span>
+		<t t-if="o.user_id">
+		  &amp;nbsp;
+		  <span style="color: #626365;" t-esc="o.user_id.name"></span>
+		</t>
+		<t t-if="o.user_id.partner_id.phone">
+		  &amp;nbsp;/&amp;nbsp;
+		  <span style="color: #626365;" t-esc="o.user_id.partner_id.phone"></span>
+		</t>
+
+	  </div>
+	  <div class="col-1 not-first-page" style="padding-top: 7%;">
+		<span style="font-weight:normal;font-family:sans-serif;font-size:12px">Page</span>
+		<span class="page" style="font-weight:normal;font-family:sans-serif;font-size:12px"/>
+		<span style="font-weight:normal;font-family:sans-serif;font-size:12px">/</span>
+		<span class="topage" style="font-weight:normal;font-family:sans-serif;font-size:12px"/>
+	  </div>
+	</div>
 
 	<div style="page-break-after:always;"/>
   </template>
@@ -137,30 +137,55 @@
 
 		</thead>
 		<tbody>
-		  <t t-foreach="o.order_line" t-as="line">
-			<tr>
-			  <td style="border: 1px solid;text-align: center; padding: 5px;">
-				<span t-esc="line.item"></span>
+		  <t t-set="current_subtotal" t-value="0"/>
+
+		  <t t-foreach="o.order_line" t-as="line" t-key="line_index">
+			<t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
+			<t t-if="not line.display_type">
+			  <tr>
+				<td style="border: 1px solid;text-align: center; padding: 5px;">
+				  <span t-esc="line.item"></span>
+				</td>
+				<td style="border: 1px solid;padding:5px;font-style: italic;">
+				  <span t-esc="line.name"></span>
+				</td>
+				<td style="border: 1px solid;text-align: center;padding:5px">
+				  <span t-esc="line.product_uom.name"></span>
+				</td>
+				<td style="border: 1px solid;text-align: center;padding:5px">
+				  <span t-field="line.product_uom_qty"></span>
+				</td>
+				<td style="border: 1px solid;text-align: end;padding:5px">
+				  <span t-esc="line.price_unit"
+						t-options='{"widget": "float", "decimal_precision": "Product Price"}'></span>
+				</td>
+				<td style="border: 1px solid;text-align: end;padding:5px">
+				  <span t-esc="line.price_subtotal"
+						t-options='{"widget": "float", "decimal_precision": "Product Price"}'></span>
+				</td>
+			  </tr>
+			</t>
+			<t t-elif="line.display_type == 'line_section'">
+			  <td name="td_section_line" colspan="99" style="border: 1px solid;padding: 5px;">
+				<span t-field="line.name"/>
 			  </td>
-			  <td style="border: 1px solid;padding:5px;font-style: italic;">
-				<span t-esc="line.name"></span>
-			  </td>
-			  <td style="border: 1px solid;text-align: center;padding:5px">
-				<span t-esc="line.product_uom.name"></span>
-			  </td>
-			  <td style="border: 1px solid;text-align: center;padding:5px">
-				<span t-field="line.product_uom_qty"></span>
-			  </td>
-			  <td style="border: 1px solid;text-align: end;padding:5px">
-				<span t-esc="line.price_unit"
-					  t-options='{"widget": "float", "decimal_precision": "Product Price"}'></span>
-			  </td>
-			  <td style="border: 1px solid;text-align: end;padding:5px">
-				<span t-esc="line.price_subtotal"
-					  t-options='{"widget": "float", "decimal_precision": "Product Price"}'></span>
-			  </td>
-			</tr>
+			  <t t-set="current_section" t-value="line"/>
+			  <t t-set="current_subtotal" t-value="0"/>
+			</t>
+			<t
+			t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
+			  <tr>
+				<td name="td_section_subtotal" colspan="99" style="border: 1px solid;text-align: end; padding: 5px;">
+				  <strong class="mr16">Sous-total:</strong>
+				  <span
+				  t-out="current_subtotal"
+				  t-options='{"widget": "float", "decimal_precision": "Product Price"}'
+				  />
+				</td>
+			  </tr>
+			</t>
 		  </t>
+
 		  <tr>
 			<td></td>
 			<td></td>
@@ -203,9 +228,12 @@
 	</div>
 	<div class="row" style="padding-top: 30px;font-size: 12px;font-family: sans-serif;">
 	  <div class="col-12" style="border: 2px solid;width: 95%;">
-		<span>Arrété le présent devis à un montant Hors TVA de</span>
+		<span>Arrété le présent devis à un montant Hors TVA de</span>&amp;nbsp;
 		<span t-esc="o.amount_total_text" style="font-weight:bolder"></span>
-		<span style="font-weight:bolder">(ARIARY MONTANT TOTAL HTVA).La taxe sur la Valeur Ajoutée de 20% sera facturée
+		<span style="font-weight:bolder">(</span>
+		<span style="font-weight:bolder" t-esc="o.amount_untaxed"
+			  t-options='{"widget": "float", "decimal_precision": "Product Price"}'></span>&amp;nbsp;
+		<span style="font-weight:bolder">ARIARY). La taxe sur la Valeur Ajoutée de 20% sera facturée
 		  en sus.
 		</span>
 	  </div>
@@ -221,7 +249,8 @@
 		  <tr style="height:120px">
 			<td style="page-break-inside: avoid;">
 			  <span style="font-size: 12px;font-family: sans-serif;font-weight:normal">Fait à Antananarivo le</span>
-			  <span t-out="o.date_order.strftime('%d %B %Y')" style="font-size: 12px;font-family: sans-serif;font-weight:normal"/>
+			  <span t-out="o.date_order.strftime('%d %B %Y')"
+					style="font-size: 12px;font-family: sans-serif;font-weight:normal"/>
 			</td>
 		  </tr>
 		  <tr>
@@ -251,12 +280,12 @@
   </template>
 
   <!--<template id="report_sale_order_document_body_oti">-->
-	<!--<div class="page">-->
-	  <!--<t t-call="oti_sale.external_layout_oti">-->
-		<!--<t t-if="not o" t-set="o" t-value="doc"/>-->
-		<!--<t t-call="oti_sale.sale_template_oti"/>-->
-	  <!--</t>-->
-	<!--</div>-->
+  <!--<div class="page">-->
+  <!--<t t-call="oti_sale.external_layout_oti">-->
+  <!--<t t-if="not o" t-set="o" t-value="doc"/>-->
+  <!--<t t-call="oti_sale.sale_template_oti"/>-->
+  <!--</t>-->
+  <!--</div>-->
   <!--</template>-->
 
 </odoo>
