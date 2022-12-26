@@ -105,7 +105,7 @@ class SaleOrder(models.Model):
 
 	def compute_amount_to_text(self):
 		for rec in self:
-			rec.amount_total_text = amount_to_text_fr(rec.amount_total, rec.currency_id.currency_unit_label)
+			rec.amount_total_text = amount_to_text_fr(rec.amount_untaxed, rec.currency_id.currency_unit_label)
 
 	def action_attachment_report(self):
 		return self.env.ref('oti_sale.action_report_attachment').report_action(self.ids)
