@@ -249,8 +249,9 @@
 		  <tr style="height:120px">
 			<td style="page-break-inside: avoid;">
 			  <span style="font-size: 12px;font-family: sans-serif;font-weight:normal">Fait à Antananarivo le</span>
-			  <span t-out="o.date_order.strftime('%d %B %Y')"
-					style="font-size: 12px;font-family: sans-serif;font-weight:normal"/>
+			  <!--<span t-out="o.date_order.strftime('%d %B %Y')"-->
+					<!--style="font-size: 12px;font-family: sans-serif;font-weight:normal"/>-->
+			  <span  t-esc="context_timestamp(o.date_order).strftime('%d %B %Y')" style="font-size: 12px;font-family: sans-serif;font-weight:normal"/>
 			</td>
 		  </tr>
 		  <tr>
