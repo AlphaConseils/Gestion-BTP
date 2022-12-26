@@ -15,7 +15,7 @@
 		<page string="Attachment" name="attachment" attrs="{'invisible': ['|', ('id', '=', False), ('state', 'not in', ['sale'] )]}">
 		  <group>
 			<field name="sale_attachment_date" options="{'datepicker': {'format': 'MM/yyyy'}}"/>
-			<field name="attachment_parent_id"/>
+			<field name="attachment_parent_id" invisible="1"/>
 			<field name="attachment_state" invisible="1"/>
 		  </group>
 		  <group>
