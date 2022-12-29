@@ -12,7 +12,6 @@ class SaleOrder(models.Model):
 	amount_total_text = fields.Char('Amount total text', compute='compute_amount_to_text')
 	sale_attachment_date = fields.Date('Choisissez la période à afficher')
 	sale_attachment_widget = fields.Binary(compute='_compute_sale_attachment')
-	# attachment_note = fields.Html('Note', compute='_get_attachment_note', inverse='_set_attachment_note')
 	attachment_note = fields.Html('Note', related='attachment_parent_id.note', readonly=False)
 	attachment_parent_id = fields.Many2one('sale.attachment.period.parent', 'Attachment Main')
 	attachment_state = fields.Selection(related='attachment_parent_id.state')
@@ -92,13 +91,14 @@ class SaleOrder(models.Model):
 				self.env['sale.attachment.period'].create({'order_line_id': order_line_id, 'percentage': percent, 'date': new_date})
 			date_start = fields.Date.from_string(new_date).replace(day=1)
 			date_end = date_start + relativedelta(months=1) - relativedelta(days=1)
-			exists = self.env['sale.attachment.period.parent'].search([('date', '>=', date_start), ('date', '<=', date_end), ('sale_id', '=', sale_id.id)], limit=1)
+			exists = self.env['sale.attachment.period.parent'].search(
+				[('date', '>=', date_start), ('date', '<=', date_end), ('sale_id', '=', sale_id.id)], limit=1)
 			if not exists:
 				vals = {
-							'sale_id': sale_id.id,
-							'date': sale_id.sale_attachment_date,
-							'state': 'draft',
-						}
+					'sale_id': sale_id.id,
+					'date': sale_id.sale_attachment_date,
+					'state': 'draft',
+				}
 				parent_attachment = self.env['sale.attachment.period.parent'].create(vals)
 				sale_id.write({'attachment_parent_id': parent_attachment.id})
 		return True
@@ -124,26 +124,6 @@ class SaleOrder(models.Model):
 		else:
 			self.attachment_parent_id = False
 
-	# @api.depends('sale_attachment_date')
-	# def _get_attachment_note(self):
-	# 	for rec in self:
-	# 		if rec.attachment_parent_id:
-	# 			rec.attachment_note = rec.attachment_parent_id.note
-	#
-	# def _set_attachment_note(self):
-	# 	for rec in self:
-	# 		if rec.attachment_parent_id:
-	# 			rec.attachment_parent_id.note = rec.attachment_note
-	# 		else:
-	# 			vals = {
-	# 				'sale_id': rec.id,
-	# 				'note': rec.attachment_note,
-	# 				'date': rec.sale_attachment_date,
-	# 				'state': 'draft',
-	# 			}
-	# 			parent_attachment = self.env['sale.attachment.period.parent'].create(vals)
-	# 			rec.write({'attachment_parent_id': parent_attachment.id})
-
 	def confirm_attachment(self):
 		self.ensure_one()
 		if self.attachment_parent_id:
@@ -161,9 +141,48 @@ class SaleOrder(models.Model):
 		pdf, _ = self.env['ir.actions.report'].with_context(landscape=True)._render_qweb_pdf('oti_sale.action_report_attachment', self.ids[0])
 		self.attachment_parent_id.write({'attachment_id': base64.b64encode(pdf)})
 
+	def _get_invoiceable_lines(self, final=False):
+		res = super()._get_invoiceable_lines(final)
+		downpayment_lines = res.filtered(lambda l: l.is_downpayment).ids
+		attachment_invoiceable = []
+		for line in res:
+			sale = line.order_id
+			if sale.attachment_parent_id:
+				date = sale.attachment_parent_id.date
+				date_start = date.replace(day=1)
+				date_end = date_start + relativedelta(months=1) - relativedelta(days=1)
+				attachment = line.attachment_period_ids.filtered(lambda l: date_start <= l.date <= date_end)
+				if attachment and attachment.percentage:
+					attachment_invoiceable.append(line.id)
+		return self.env['sale.order.line'].browse(downpayment_lines + attachment_invoiceable)
+
 
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
 	item = fields.Char('Item')
 	attachment_period_ids = fields.One2many('sale.attachment.period', 'order_line_id', string="Attachment periods")
+	qty_invoiced_progress = fields.Float('% Avancement', compute='_compute_invoice_progress')
+
+	@api.depends('qty_invoiced')
+	def _compute_invoice_progress(self):
+		for rec in self:
+			if rec.product_uom_qty:
+				rec.qty_invoiced_progress = rec.qty_invoiced * 100 / rec.product_uom_qty
+			else:
+				rec.qty_invoiced_progress = 0
+
+	def _prepare_invoice_line(self, **optional_values):
+		res = super()._prepare_invoice_line(**optional_values)
+		sale = self.order_id
+		if sale.attachment_parent_id:
+			date = sale.attachment_parent_id.date
+			date_start = date.replace(day=1)
+			date_end = date_start + relativedelta(months=1) - relativedelta(days=1)
+			attachment = self.attachment_period_ids.filtered(lambda l: date_start <= l.date <= date_end)
+			percentage = attachment[0].percentage if attachment else 0
+			if percentage:
+				res.update({
+					'quantity': self.product_uom_qty * percentage / 100,
+				})
+		return res

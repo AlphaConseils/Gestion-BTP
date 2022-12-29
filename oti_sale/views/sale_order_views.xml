@@ -30,7 +30,7 @@
 			</group>
 			<group>
 			  <button name="action_attachment_report" string="Imprimer" type="object" class="oe_highlight"></button>
-			  <button name="confirm_attachment" string="Valider" type="object" attrs="{'invisible':[('attachment_parent_id', '!=', False), ('attachment_state', '!=', 'draft')]}"></button>
+			  <button name="confirm_attachment" string="Valider" type="object" attrs="{'invisible':[('attachment_parent_id', '!=', False), ('attachment_state', '!=', 'draft')]}" groups="oti_sale.group_oti_sale_attachment"/>
 			  <div attrs="{'invisible':[('attachment_state', '!=', 'validated')]}">
 				<span>Attachement Validé</span>
 			  </div>
@@ -38,6 +38,9 @@
 
 		  </group>
 		</page>
+	  </xpath>
+	  <xpath expr="//tree/field[@name='qty_invoiced']" position="after">
+		<field name="qty_invoiced_progress" widget="progressbar" options="{'current_value': 'qty_invoiced_progress', 'max_value': '100', 'editable': false}"/>
 	  </xpath>
 	</field>
   </record>
