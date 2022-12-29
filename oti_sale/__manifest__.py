@@ -17,16 +17,19 @@
 	'version': '0.1',
 
 	# any module necessary for this one to work correctly
-	'depends': ['sale'],
+	'depends': ['base', 'sale', 'account', 'stock'],
 
 	# always loaded
 	'data': [
 		'security/ir.model.access.csv',
+		'security/oti_groups.xml',
 		'report/layout.xml',
 		'report/sale_order_template.xml',
 		'report/sale_attachment_template.xml',
 		'report/sale_order_report.xml',
 		'views/sale_order_views.xml',
+		'views/stock_warehouse_views.xml',
+		'views/product_product_views.xml',
 
 	],
 	'assets': {
