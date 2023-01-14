@@ -15,9 +15,36 @@
 	  <t t-call="oti_sale.external_layout_oti">
 		<t t-if="not o" t-set="o" t-value="doc"/>
 		<div class="row attachment_row">
-		  <div class="col-4">
-			<img src="/oti_sale/static/src/img/2(1).png" style="width:50%"></img>
-		  </div>
+		  <table style="">
+			<tr>
+			  <td style="width:25%;">
+				<img src="/oti_sale/static/src/img/2(2).png" style="width:385px;vertical-align:top;display:inline"></img>
+			  </td>
+			  <td style="width:75%;">
+				<div style="vertical-align:top;display:inline;">
+				  <br/>
+				  <span>Lot IA 58 Ampatsakana Antananarivo 101 MADAGASCAR</span><br/>
+				  <span style="text-decoration:underline">NIF:</span> <span>0000010039</span><br/>
+				  <span style="text-decoration:underline">STAT:</span> <span>25114 11 2007 0 11026</span><br/>
+				  <span>CIF:</span> <span>0044791/DGI-I du 30/06/2021</span><br/>
+				  <span>Tel-fax:</span> <span>020 22 323 48</span><br/>
+				  <span>Email:</span> <span style="text-decoration:underline">secoti@oti.mg</span>
+				</div>
+
+			  </td>
+			</tr>
+		  </table>
+		  <!--<div class="col-4">-->
+			<!--<img src="/oti_sale/static/src/img/2(1).png" style="width:50%"></img>-->
+		  <!--</div>-->
+		  <!--<div class="col-4">-->
+			<!--<span>Lot IA 58 Ampatsakana Antananarivo 101 MADAGASCAR</span><br/>-->
+			<!--<span style="text-decoration:underline">NIF:</span> <span>0000010039</span><br/>-->
+			<!--<span style="text-decoration:underline">STAT:</span> <span>25114 11 2007 0 11026</span><br/>-->
+			<!--<span>CIF:</span> <span>0044791/DGI-I du 30/06/2021</span><br/>-->
+			<!--<span>Tel-fax:</span> <span>020 22 323 48</span><br/>-->
+			<!--<span>Email:</span> <span style="text-decoration:underline">secoti@oti.mg</span>-->
+		  <!--</div>-->
 		</div>
 		<div class="row attachment_row">
 		  <div class="col-12" style="text-align: center;">
