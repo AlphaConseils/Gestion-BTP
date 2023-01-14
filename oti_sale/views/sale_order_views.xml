@@ -40,7 +40,7 @@
 		</page>
 	  </xpath>
 	  <xpath expr="//tree/field[@name='qty_invoiced']" position="after">
-		<field name="qty_invoiced_progress" widget="progressbar" options="{'current_value': 'qty_invoiced_progress', 'max_value': '100', 'editable': false}"/>
+		<field name="qty_invoiced_progress" widget="progressbar" options="{'current_value': 'qty_invoiced_progress', 'max_value': '100', 'editable': false}" attrs="{'column_invisible': [('parent.state', '!=', 'sale')]}"/>
 	  </xpath>
 	</field>
   </record>
